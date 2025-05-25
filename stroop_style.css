@@ -199,20 +199,10 @@ select#preparationPhase {
 
     .form-group input,
     .form-group select,
-    .form-group input[type="text"],
-    .form-group select {
-        width: 95%;
-        max-width: 95%;
-        margin: 5px auto;
-        box-sizing: border-box;
-        font-size: 14px; /* Riduco leggermente la dimensione del font */
-        padding: 8px 10px; /* Riduco leggermente il padding */
-    }
-
-    /* Rimuovo gli stili specifici per preparationPhase dato che ora tutti gli input seguono lo stesso pattern */
     select#preparationPhase {
-        width: 95%;
-        max-width: 95%;
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0 !important; /* Rimuove qualsiasi margine left */
     }
 
     label[for="preparationPhase"] {
