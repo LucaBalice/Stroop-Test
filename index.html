@@ -332,7 +332,7 @@
             const hiddenForm = document.createElement('form');
             hiddenForm.method = 'POST';
             hiddenForm.action = formActionURL;
-            hiddenForm.target = '_blank';
+            hiddenForm.target = 'hidden_iframe';
             hiddenForm.style.display = 'none';
             
             // Aggiungiamo i campi del form
@@ -364,13 +364,11 @@
             document.body.appendChild(hiddenIframe);
             document.body.appendChild(hiddenForm);
             
-            // Impostiamo il target del form sull'iframe
-            hiddenForm.target = 'hidden_iframe';
-            
-            // Inviamo il form
-            hiddenForm.submit();
-            
-            console.log("Form inviato tramite iframe");
+            // Inviamo il form dopo aver assicurato che l'iframe sia caricato
+            setTimeout(() => {
+                hiddenForm.submit();
+                console.log("Form inviato tramite iframe");
+            }, 100);
             
             // Aggiungiamo un messaggio di conferma
             const messageDiv = document.createElement('div');
