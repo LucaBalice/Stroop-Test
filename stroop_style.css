@@ -194,12 +194,19 @@ select#preparationPhase {
         display: block;
         margin-bottom: 5px;
         min-width: unset;
+        margin-left: 0 !important; /* Rimuove qualsiasi margine left */
     }
 
     .form-group input,
-    .form-group select {
+    .form-group select,
+    select#preparationPhase {
         width: 100%;
         max-width: 100%;
+        margin-left: 0 !important; /* Rimuove qualsiasi margine left */
+    }
+
+    label[for="preparationPhase"] {
+        margin-left: 0 !important; /* Rimuove il margine left specifico */
     }
 
     button {
