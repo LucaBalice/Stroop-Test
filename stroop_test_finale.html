@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stroop Test - Italiano</title>
+    <link rel="stylesheet" href="stroop_style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Stroop Test </h1>
+
+    <div id="intro">
+        <div class="instruction">
+            <p><strong>Obiettivo del test:</strong></p>
+            <p>Ti verrà mostrata una parola che rappresenta un colore (es. "ROSSO").</p>
+            <p><strong>Il tuo compito è cliccare sul pulsante che indica il colore del testo</strong>, NON il significato della parola.</p>
+            
+            <div class="example">
+                <p>Esempio: se leggi la parola <span style="color:green; font-weight:bold;">ROSSO</span> (scritta in verde), dovrai cliccare su <strong>VERDE</strong>.</p>
+            </div>
+            
+            <p>Quando sei pronto, puoi eseguire una prova di esempio (non registrata) e poi iniziare il test ufficiale.</p>
+        </div>
+        
+        <div class="form-group">
+            <label for="participantId"><strong>ID Partecipante:</strong></label>
+            <input type="text" id="participantId" placeholder="Inserisci il tuo ID">
+        </div>
+        
+        <div class="form-group">
+            <label for="preparationPhase"><strong>Fase di Preparazione:</strong></label>
+            <select id="preparationPhase">
+                <option value="">Seleziona una fase</option>
+                <option value="Normocalorica">Normocalorica</option>
+                <option value="Ipercalorica">Ipercalorica</option>
+                <option value="Ipocalorica">Ipocalorica</option>
+            </select>
+        </div>
+        
+        <button onclick="startExample()">▶️ Fai una prova</button>
+        <button onclick="startCountdown()">✅ Inizia il test ufficiale</button>
+    </div>
+
+    <div id="countdown"></div>
+
+    <div id="exampleArea">
+        <h2>Prova di esempio</h2>
+        <p>Questo è solo un esempio per capire il funzionamento del test. Le risposte non verranno registrate.</p>
+        <div class="word" id="exampleWord"></div>
+        <div class="buttons" id="exampleButtons"></div>
+        <button onclick="endExample()">✔️ Ho capito, vai al test ufficiale</button>
+    </div>
+
+    <div id="testArea">
+        <div class="word" id="word"></div>
+        <div class="buttons" id="buttons"></div>
+    </div>
+
+    <div id="endMessage">
+        <h2>Test completato</h2>
+        <p>Grazie per la tua partecipazione!</p>
+    </div>
+</div>
+
+<script>
+    // Utilizziamo il form URL dalla link.txt
+    const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSdUNAE9kh18u38Wh9i_QKIVoVoFWw0EPgVQmBPwEkCcFZJOiA/formResponse";
+
+    // Utilizziamo le entry esatte dal file JSON aggiornato
+    const entryIds = {
+        idPartecipante: "entry.134611880",
+        fasePreparazione: "entry.1714535536",
+        prova: "entry.873052933",
+        parola: "entry.2085723209",
+        colore: "entry.77867383",
+        risposta: "entry.1229961556",
+        corretta: "entry.1789674790",
+        tempo: "entry.550333100"
+    };
+
+    // Genera una serie di 50 stimoli casuali
+    const paroleColori = [];
+    const parole = ["ROSSO", "GIALLO", "VERDE", "BLU"];
+    const colori = ["Rosso", "Blu", "Verde", "Giallo"];
+    
+    // Genera 50 stimoli casuali
+    for (let i = 0; i < 10; i++) {
+        const parolaIndex = Math.floor(Math.random() * parole.length);
+        const coloreIndex = Math.floor(Math.random() * colori.length);
+        paroleColori.push({
+            parola: parole[parolaIndex],
+            colore: colori[coloreIndex]
+        });
+    }
+
+    const coloriPossibili = ["Rosso", "Blu", "Verde", "Giallo"];
+    let current = 0;
+    let startTime = 0;
+    let idPartecipante = "";
+
+    // Aggiungiamo array per salvare i dati localmente
+    let risposteUtente = {
+        idPartecipante: "",
+        fasePreparazione: "",
+        prove: [],
+        parole: [],
+        colori: [],
+        risposte: [],
+        risultati: [],
+        tempi: []
+    };
+
+
+    document.getElementById("intro").style.display = "block";
+
+    function startExample() {
+        document.getElementById("intro").style.display = "none";
+        document.getElementById("exampleArea").style.display = "block";
+
+        const stimolo = { parola: "ROSSO", colore: "Verde" };
+        const wordDiv = document.getElementById("exampleWord");
+        wordDiv.textContent = stimolo.parola;
+        
+        // Impostiamo il colore effettivo dell'esempio
+        switch(stimolo.colore.toLowerCase()) {
+            case "rosso":
+                wordDiv.style.color = "red";
+                break;
+            case "blu":
+                wordDiv.style.color = "blue";
+                break;
+            case "verde":
+                wordDiv.style.color = "green";
+                break;
+            case "giallo":
+                wordDiv.style.color = "yellow";
+                break;
+            default:
+                wordDiv.style.color = "black";
+        }
+
+        const buttonsDiv = document.getElementById("exampleButtons");
+        buttonsDiv.innerHTML = "";
+        coloriPossibili.forEach(col => {
+            const btn = document.createElement("button");
+            btn.textContent = col.toUpperCase();
+            btn.className = "color-button"; // Add class for styling
+            
+            // Assegna il colore corretto al pulsante
+            switch(col.toLowerCase()) {
+                case "rosso":
+                    btn.style.backgroundColor = "red";
+                    btn.style.color = "white";
+                    break;
+                case "blu":
+                    btn.style.backgroundColor = "blue";
+                    btn.style.color = "white";
+                    break;
+                case "verde":
+                    btn.style.backgroundColor = "green";
+                    btn.style.color = "white";
+                    break;
+                case "giallo":
+                    btn.style.backgroundColor = "yellow";
+                    btn.style.color = "black";
+                    break;
+            }
+            
+            // Modifica per informare l'utente se la risposta è corretta o sbagliata
+            btn.onclick = () => {
+                const isCorrect = col === stimolo.colore;
+                if (isCorrect) {
+                    alert("CORRETTO! ✅ Hai selezionato il colore del testo ("+col.toUpperCase()+").");
+                } else {
+                    alert("SBAGLIATO! ❌ Hai selezionato "+col.toUpperCase()+", ma il colore del testo è "+stimolo.colore.toUpperCase()+".");
+                }
+            };
+            
+            buttonsDiv.appendChild(btn);
+        });
+    }
+
+    function endExample() {
+        // Invece di avviare subito il countdown, torniamo alla pagina principale
+        document.getElementById("exampleArea").style.display = "none";
+        document.getElementById("intro").style.display = "block";
+    }
+
+    function startCountdown() {
+        idPartecipante = document.getElementById("participantId").value.trim();
+        if (!idPartecipante) {
+            alert("Inserisci il tuo ID partecipante prima di iniziare.");
+            return;
+        }
+        
+        // Controlliamo che l'utente abbia selezionato una fase di preparazione valida
+        const fasePreparazione = document.getElementById("preparationPhase").value;
+        if (!fasePreparazione) {
+            alert("Seleziona una fase di preparazione prima di iniziare.");
+            return;
+        }
+        
+        // Inizializziamo l'oggetto risposte con l'ID partecipante e la fase di preparazione
+        risposteUtente.idPartecipante = idPartecipante;
+        risposteUtente.fasePreparazione = fasePreparazione;
+        
+        document.getElementById("intro").style.display = "none";
+        let count = 3;
+        const countdownDiv = document.getElementById("countdown");
+        countdownDiv.style.display = "block";
+        countdownDiv.textContent = "Il test inizia tra " + count + "...";
+        const interval = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countdownDiv.textContent = "Il test inizia tra " + count + "...";
+            } else {
+                clearInterval(interval);
+                countdownDiv.style.display = "none";
+                document.getElementById("testArea").style.display = "block";
+                mostraParola();
+            }
+        }, 1000);
+    }
+
+    function mostraParola() {
+        if (current >= paroleColori.length) {
+            document.getElementById("testArea").style.display = "none";
+            document.getElementById("endMessage").style.display = "block";
+            return;
+        }
+
+        const stimolo = paroleColori[current];
+        const wordDiv = document.getElementById("word");
+        wordDiv.textContent = stimolo.parola;
+        
+        // Impostiamo il colore effettivo in base al nome del colore
+        switch(stimolo.colore.toLowerCase()) {
+            case "rosso":
+                wordDiv.style.color = "red";
+                break;
+            case "blu":
+                wordDiv.style.color = "blue";
+                break;
+            case "verde":
+                wordDiv.style.color = "green";
+                break;
+            case "giallo":
+                wordDiv.style.color = "yellow";
+                break;
+            default:
+                wordDiv.style.color = "black";
+        }
+
+        const buttonsDiv = document.getElementById("buttons");
+        buttonsDiv.innerHTML = "";
+        coloriPossibili.forEach(col => {
+            const btn = document.createElement("button");
+            btn.textContent = col.toUpperCase();
+            btn.className = "color-button"; // Add class for styling
+            
+            // Assegna il colore corretto al pulsante
+            switch(col.toLowerCase()) {
+                case "rosso":
+                    btn.style.backgroundColor = "red";
+                    btn.style.color = "white";
+                    break;
+                case "blu":
+                    btn.style.backgroundColor = "blue";
+                    btn.style.color = "white";
+                    break;
+                case "verde":
+                    btn.style.backgroundColor = "green";
+                    btn.style.color = "white";
+                    break;
+                case "giallo":
+                    btn.style.backgroundColor = "yellow";
+                    btn.style.color = "black";
+                    break;
+            }
+            
+            btn.onclick = () => gestisciRisposta(col);
+            buttonsDiv.appendChild(btn);
+        });
+
+        startTime = Date.now();
+    }
+
+    function gestisciRisposta(rispostaUtente) {
+        const stimolo = paroleColori[current];
+        const tempo = Date.now() - startTime;
+        const corretta = rispostaUtente === stimolo.colore;
+
+        // Salviamo i dati negli array locali
+        risposteUtente.prove.push(current + 1);
+        risposteUtente.parole.push(stimolo.parola);
+        risposteUtente.colori.push(stimolo.colore);
+        risposteUtente.risposte.push(rispostaUtente);
+        risposteUtente.risultati.push(corretta ? "sì" : "no");
+        risposteUtente.tempi.push(tempo);
+
+        current++;
+        
+        // Se abbiamo finito le prove, invia i dati al form
+        if (current >= paroleColori.length) {
+            inviaRisposteAlForm();
+            document.getElementById("testArea").style.display = "none";
+            document.getElementById("endMessage").style.display = "block";
+        } else {
+            setTimeout(mostraParola, 300);
+        }
+    }
+    
+    // Funzione per inviare tutte le risposte al form
+    function inviaRisposteAlForm() {
+        try {
+            // Prepariamo i dati raccolti come paragrafi di testo
+            const idParagrafo = risposteUtente.idPartecipante;
+            const fasePreparazioneParagrafo = risposteUtente.fasePreparazione; // Usa il valore selezionato
+            const proveParagrafo = risposteUtente.prove.join(", ");
+            const paroleParagrafo = risposteUtente.parole.join(", ");
+            const coloriParagrafo = risposteUtente.colori.join(", ");
+            const risposteParagrafo = risposteUtente.risposte.join(", ");
+            const correttezzaParagrafo = risposteUtente.risultati.join(", ");
+            const tempiParagrafo = risposteUtente.tempi.join(", ");
+            
+            // Costruiamo l'URL del form con i parametri
+            let formActionURL = formURL;
+            
+            // Creiamo un form nascosto e lo aggiungiamo alla pagina
+            const hiddenForm = document.createElement('form');
+            hiddenForm.method = 'POST';
+            hiddenForm.action = formActionURL;
+            hiddenForm.target = '_blank';
+            hiddenForm.style.display = 'none';
+            
+            // Aggiungiamo i campi del form
+            const addField = (name, value) => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = name;
+                input.value = value;
+                hiddenForm.appendChild(input);
+            };
+            
+            // Aggiungiamo tutti i campi inclusa la fase di preparazione
+            addField(entryIds.idPartecipante, idParagrafo);
+            addField(entryIds.fasePreparazione, fasePreparazioneParagrafo);
+            addField(entryIds.prova, proveParagrafo);
+            addField(entryIds.parola, paroleParagrafo);
+            addField(entryIds.colore, coloriParagrafo);
+            addField(entryIds.risposta, risposteParagrafo);
+            addField(entryIds.corretta, correttezzaParagrafo);
+            addField(entryIds.tempo, tempiParagrafo);
+            
+            // Creiamo un iframe nascosto per ricevere la risposta senza cambiare pagina
+            const hiddenIframe = document.createElement('iframe');
+            hiddenIframe.name = 'hidden_iframe';
+            hiddenIframe.id = 'hidden_iframe';
+            hiddenIframe.style.display = 'none';
+            
+            // Aggiungiamo l'iframe e il form al documento
+            document.body.appendChild(hiddenIframe);
+            document.body.appendChild(hiddenForm);
+            
+            // Impostiamo il target del form sull'iframe
+            hiddenForm.target = 'hidden_iframe';
+            
+            // Inviamo il form
+            hiddenForm.submit();
+            
+            console.log("Form inviato tramite iframe");
+            
+            // Aggiungiamo un messaggio di conferma
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = "<p>Tutti i dati sono stati inviati con successo!</p>";
+            document.getElementById("endMessage").appendChild(messageDiv);
+            
+        } catch (error) {
+            console.error("Errore nell'inviare i dati al form:", error);
+            alert("Si è verificato un errore. Contatta l'amministratore.");
+        }
+    }
+</script>
+
+</body>
+</html>

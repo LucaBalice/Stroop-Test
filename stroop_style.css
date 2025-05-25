@@ -1,0 +1,205 @@
+/* Stroop Test - Clean Scientific Style */
+
+/* Base styles and typography */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(to bottom, #f9f9f9, #e9e9e9);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.92);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 2.2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 1.7rem;
+    color: #3498db;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 15px;
+    color: #444;
+}
+
+strong {
+    color: #2c3e50;
+}
+
+/* Form elements */
+input[type="text"], select {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus, select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+select {
+    background-color: white;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* Buttons */
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    margin: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* Stroop test specific elements */
+.word {
+    font-size: 56px;
+    font-weight: bold;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    min-width: 200px;
+}
+
+.buttons {
+    margin: 30px auto;
+}
+
+.color-button {
+    min-width: 120px;
+    margin: 10px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.color-button:hover {
+    transform: scale(1.05);
+}
+
+/* Test sections */
+#intro, #testArea, #endMessage, #countdown, #exampleArea {
+    display: none;
+    text-align: center;
+    margin: 20px auto;
+}
+
+#countdown {
+    font-size: 48px;
+    font-weight: bold;
+    color: #3498db;
+    margin: 40px auto;
+}
+
+#endMessage {
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 5px solid #2ecc71;
+}
+
+/* Examples and instructions */
+.example {
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.instruction {
+    margin-bottom: 30px;
+    line-height: 1.7;
+}
+
+/* Add this specific style for the preparation phase label */
+label[for="preparationPhase"] {
+    margin-left: 100px;
+    display: inline-block;
+}
+
+/* Move the select element (not the label) for preparation phase 100px to the right */
+select#preparationPhase {
+    margin-left: 100px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+        margin-top: 10px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .word {
+        font-size: 42px;
+        padding: 15px;
+    }
+    
+    button {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+}
